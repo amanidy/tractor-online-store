@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <h1 className="text-xl font-bold text-gray-800">AgriMarketplace</h1>
             <nav className="space-x-4">
               <Link href="/" className="text-gray-700">Home</Link>
-              <Link href="/listings" className="text-gray-700">Listings</Link>
+              <Link href="/pages/tractors" className="text-gray-700">Listings</Link>
               <Link href="/about" className="text-gray-700">About</Link>
               <Link href="/contact" className="text-gray-700">Contact</Link>
             </nav>

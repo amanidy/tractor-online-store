@@ -27,7 +27,7 @@ export default function Register() {
 
         try { 
 
-        const response = await fetch("/api/register/route.ts", {
+        const response = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -99,7 +99,7 @@ export default function Register() {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border rounded  border-gray-400 "
+            className="w-full px-4 py-2 border rounded  border-gray-400 text-gray-400 "
             required
           />
         </div>

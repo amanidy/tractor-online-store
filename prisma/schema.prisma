@@ -22,4 +22,22 @@ model User {
   isVerified  Boolean  @default(false)
   role        String   @default("buyer") // "buyer" or "seller"
   createdAt   DateTime @default(now())
+
+  tractors    Tractor[]
 }
+
+
+model Tractor {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  price        Float
+  location     String
+  specifications String
+  history      String
+  images       String[] 
+  sellerId     Int
+  seller       User     @relation(fields: [sellerId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
