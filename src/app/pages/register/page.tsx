@@ -52,9 +52,9 @@ export default function Register() {
         localStorage.setItem('userId', result.user.id);
  
 
-        // Redirect based on role
+        
         if (result.user.role === 'seller') {
-          router.push('/pages/tractorsAddingForm');
+          router.push('/pages/dashboard');
         } else {
           router.push('/pages/tractors');
         }

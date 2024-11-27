@@ -1,32 +1,32 @@
-import { NextApiRequest } from "next";
-import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function POST(req: NextApiRequest) {
-    const { tractorId, name, email, message } = req.body;
-    try {
-        const newInquiry = await prisma.inquiry.create({
-          data: {
-            tractorId,
-            name,
-            email,
-            message,
-          },
-        });
-     }
-    catch (error) {
-        console.error(error);
-         return NextResponse.json(
-           { error: "Failed to create inquiry" },
-           { status: 500 }
-         );
-    }
 
+export async function POST(req: Request) {
+  const { tractorId, name, email, message } = await req.json(); 
+  try {
+    const newInquiry = await prisma.inquiry.create({
+      data: {
+        tractorId,
+        name,
+        email,
+        message,
+      },
+    });
+    return NextResponse.json({ newInquiry }, { status: 201 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to create inquiry" },
+      { status: 500 }
+    );
+  }
 }
 
-async function GET() {
+
+export async function GET() {
   try {
     const inquiries = await prisma.inquiry.findMany();
     return NextResponse.json({ inquiries }, { status: 200 });

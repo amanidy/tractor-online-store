@@ -72,11 +72,11 @@ export async function GET(req: NextRequest) {
       include: {
         seller: {
           select: {
-            name: true, // Adjust based on your actual seller model
+            name: true,
           },
         },
         inquiries: true, 
-        sales: true, // Include sales data related to the tractor
+        sales: true, 
       },
     });
 
