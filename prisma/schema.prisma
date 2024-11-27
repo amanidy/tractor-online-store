@@ -39,5 +39,29 @@ model Tractor {
   sellerId     Int
   seller       User     @relation(fields: [sellerId], references: [id])
   createdAt    DateTime @default(now())
+  inquiries      Inquiry[]  
+  sales          Sale[]
 }
 
+
+model Inquiry {
+  id         Int      @id @default(autoincrement())
+  tractorId  Int
+  name       String
+  email      String
+  message    String
+  createdAt  DateTime @default(now())
+
+   
+  tractor    Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  tractorId  Int
+  buyerName  String
+  price      Float
+  createdAt  DateTime @default(now())
+  
+  tractor    Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
+}

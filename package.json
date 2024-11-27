@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
+    "formidable": "^3.5.2",
     "next": "15.0.3",
     "prisma": "^5.22.0",
     "react": "19.0.0-rc-66855b96-20241106",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/formidable": "^3.4.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
