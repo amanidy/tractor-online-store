@@ -25,11 +25,11 @@ const SalesData = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Sales Data</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-500">Sales Data</h2>
       {sales.length ? (
         <ul>
           {sales.map((sale) => (
-            <li key={sale.id} className="mb-4">
+            <li key={sale.id} className="mb-4 text-gray-500">
               <p>
                 <strong>Buyer Name:</strong> {sale.buyerName}
               </p>
@@ -43,7 +43,7 @@ const SalesData = () => {
           ))}
         </ul>
       ) : (
-        <p>No sales data available.</p>
+        <p className="text-gray-500">No sales data available.</p>
       )}
     </div>
   );

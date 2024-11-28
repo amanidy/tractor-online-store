@@ -25,11 +25,11 @@ const Inquiries = () => {
 
   return (
     <div className="bg-white p-4 rounded shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Inquiries</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-400">Inquiries</h2>
       {inquiries.length ? (
         <ul>
           {inquiries.map((inquiry) => (
-            <li key={inquiry.id} className="mb-4">
+            <li key={inquiry.id} className="mb-4 text-gray-500">
               <p>
                 <strong>Name:</strong> {inquiry.name}
               </p>
@@ -47,7 +47,7 @@ const Inquiries = () => {
           ))}
         </ul>
       ) : (
-        <p>No inquiries available.</p>
+        <p className="text-gray-500">No inquiries available.</p>
       )}
     </div>
   );
