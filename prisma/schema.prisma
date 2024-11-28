@@ -14,54 +14,155 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String   @unique
-  phone       String?  @unique
-  password    String
-  isVerified  Boolean  @default(false)
-  role        String   @default("buyer") // "buyer" or "seller"
-  createdAt   DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  name            String
+  email           String   @unique
+  phone           String?  @unique
+  password        String
+  passwordHash    String
+  isVerified      Boolean  @default(false)
+  role            String   @default("buyer") // "buyer" or "seller"
+  createdAt       DateTime @default(now())
+  userrole        UserRole @default(SELLER)
 
-  tractors    Tractor[]
+  tractors        Tractor[]
+  listings        Listing[]
+  purchases       Transaction[] @relation("BuyerTransactions")
+  sales           Transaction[] @relation("SellerTransactions")
+  qualityReports   QualityReport[] @relation("ReportedByReports") // Relation to QualityReport
 }
-
 
 model Tractor {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  price        Float
-  location     String
-  specifications String
-  history      String
-  images       String[] 
-  sellerId     Int
-  seller       User     @relation(fields: [sellerId], references: [id])
-  createdAt    DateTime @default(now())
-  inquiries      Inquiry[]  
-  sales          Sale[]
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  price           Float
+  location        String
+  specifications  String
+  history         String
+  images          String[] 
+  sellerId        Int
+  seller          User     @relation(fields: [sellerId], references: [id])
+  createdAt       DateTime @default(now())
+  inquiries       Inquiry[]  
+  sales           Sale[]
 }
 
-
 model Inquiry {
-  id         Int      @id @default(autoincrement())
-  tractorId  Int
-  name       String
-  email      String
-  message    String
-  createdAt  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  tractorId       Int
+  name            String
+  email           String
+  message         String
+  createdAt       DateTime @default(now())
 
-   
-  tractor    Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
+  tractor         Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
 }
 
 model Sale {
-  id         Int      @id @default(autoincrement())
-  tractorId  Int
-  buyerName  String
-  price      Float
-  createdAt  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  tractorId       Int
+  buyerName       String
+  price           Float
+  createdAt       DateTime @default(now())
   
-  tractor    Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
+  tractor         Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
+}
+
+enum UserRole {
+  ADMIN
+  SELLER
+  BUYER
+}
+
+// Listing model for tractors and agricultural implements
+model Listing {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  category        String
+  make            String
+  model           String
+  year            Int
+  condition       ListingCondition
+  price           Float
+  location        String
+  images          String[]
+  status          ListingStatus    @default(PENDING)
+  seller          User            @relation(fields: [sellerId], references: [id])
+  sellerId        Int
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  transactions    Transaction[]
+  qualityReports  QualityReport[]
+}
+
+// Enum for listing status
+enum ListingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Enum for listing condition
+enum ListingCondition {
+  NEW
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+// Transaction model to track sales
+model Transaction {
+  id              String            @id @default(cuid())
+  listing         Listing          @relation(fields: [listingId], references: [id])
+  listingId       String
+  buyer           User            @relation("BuyerTransactions", fields: [buyerId], references: [id])
+  buyerId         Int
+  seller          User            @relation("SellerTransactions", fields: [sellerId], references: [id])
+  sellerId        Int
+  price           Float
+  status          TransactionStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+// Enum for transaction status
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+// Quality Report model for tracking and managing quality concerns
+model QualityReport {
+  id              String           @id @default(cuid())
+  listing         Listing         @relation(fields: [listingId], references: [id])
+  listingId       String
+  reportedBy      User           @relation("ReportedByReports", fields: [reportedById], references: [id])
+  reportedById    Int
+  description     String
+  severity        QualitySeverity
+  status          QualityReportStatus @default(OPEN)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+// Enum for quality report severity
+enum QualitySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Enum for quality report status
+enum QualityReportStatus {
+  OPEN
+  INVESTIGATED
+  RESOLVED
+  CLOSED
 }

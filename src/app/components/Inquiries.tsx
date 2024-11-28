@@ -1,6 +1,7 @@
-"use client"
-import { useState, useEffect } from 'react';
 
+"use client"
+import React, { useState, useEffect } from 'react';
+import { MessageCircle } from 'lucide-react';
 
 interface Inquiry {
   id: number;
@@ -11,47 +12,48 @@ interface Inquiry {
   createdAt: string;
 }
 
-const Inquiries = () => {
+const InquiriesDashboardCard: React.FC = () => {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [totalInquiries, setTotalInquiries] = useState<number>(0);
 
   useEffect(() => {
     const fetchInquiries = async () => {
       const res = await fetch('/api/inquiries');
       const data = await res.json();
       setInquiries(data.inquiries);
+      setTotalInquiries(data.inquiries.length);
     };
     fetchInquiries();
   }, []);
 
   return (
-    <div className="bg-white p-4 rounded shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-400">Inquiries</h2>
-      {inquiries.length ? (
-        <ul>
-          {inquiries.map((inquiry) => (
-            <li key={inquiry.id} className="mb-4 text-gray-500">
-              <p>
-                <strong>Name:</strong> {inquiry.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {inquiry.email}
-              </p>
-              <p>
-                <strong>Message:</strong> {inquiry.message}
-              </p>
-              <p>
-                <strong>Date:</strong>{' '}
-                {new Date(inquiry.createdAt).toLocaleDateString()}
-              </p>
-            </li>
+    <div className="bg-green-500 text-white rounded-lg p-6 shadow-md">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-sm font-medium opacity-75 mb-2">Customer Inquiries</h3>
+          <p className="text-3xl font-bold">{totalInquiries}</p>
+          <div className="text-sm mt-2 text-green-100">
+            New Inquiries
+          </div>
+        </div>
+        <div className="opacity-75">
+          <MessageCircle size={32} />
+        </div>
+      </div>
+
+      {inquiries.length > 0 && (
+        <div className="mt-4 border-t border-green-400 pt-4">
+          <h4 className="text-sm mb-2 opacity-75">Recent Inquiries</h4>
+          {inquiries.slice(0, 3).map((inquiry) => (
+            <div key={inquiry.id} className="text-sm mb-2 text-green-100">
+              <div className="font-semibold">{inquiry.name}</div>
+              <div className="truncate">{inquiry.message}</div>
+            </div>
           ))}
-        </ul>
-      ) : (
-        <p className="text-gray-500">No inquiries available.</p>
+        </div>
       )}
     </div>
   );
 };
 
-export default Inquiries;
-
+export default InquiriesDashboardCard;

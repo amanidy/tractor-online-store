@@ -50,11 +50,14 @@ export default function Register() {
         });
 
         localStorage.setItem('userId', result.user.id);
+
+        const fullName = `${result.user.name} `.trim();
+        localStorage.setItem('sellerName', fullName);
  
 
         
         if (result.user.role === 'seller') {
-          router.push('/pages/dashboard');
+          router.push('/seller');
         } else {
           router.push('/pages/tractors');
         }
