@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { 
   TractorIcon, 
   DollarSign, 
@@ -69,7 +70,12 @@ const AdminDashboardPage: React.FC = () => {
               </button>
               <button className="w-full bg-yellow-500 text-white py-3 rounded-lg hover:bg-yellow-600 transition">
                 Quality Control
-              </button>
+            </button>
+           <button className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"><Link  href ="/pages/DealersAddForm" >
+                Add new Dealers
+            </Link>
+            </button>
+            
             </div>
           </div>
         </div>

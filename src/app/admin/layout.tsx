@@ -22,7 +22,7 @@ const AdminLayout = ( {children }: { children: React.ReactNode }) => {
     { 
       icon: <List className="w-5 h-5" />, 
       label: 'Manage Listings', 
-      href: '/admin/listings' 
+      href: '/admin/tractors' 
     },
     { 
       icon: <CheckCircle className="w-5 h-5" />, 

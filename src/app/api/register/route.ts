@@ -1,7 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient,UserRole } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
+
 
 const prisma = new PrismaClient();
 
@@ -27,19 +28,15 @@ export async function POST(req: NextRequest) {
         email,
         phone,
         password: hashedPassword,
-        role: role || "buyer", // Ensure role is set
+        userrole: (role?.toUpperCase() as UserRole) || UserRole.SELLER,
+        role: role || "seller",
       },
     });
 
-    // Determine redirect path based on role
-    let redirectPath = "";
-    if (user.role === "seller") {
-      redirectPath = "/pages/tractorsAddingForm"; // Exact path from your routing
-    } else if (user.role === "buyer") {
-      redirectPath = "/pages/tractors";
-    }
+    
+    const redirectPath = user.role === "seller" ? "/seller" : "/pages/tractors";
 
-    // Return user and redirect path
+    
     return NextResponse.json(
       {
         message: "User registered successfully",
@@ -53,7 +50,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: unknown) {
+  } catch (error) {
+    
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return NextResponse.json(
@@ -63,10 +61,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.error("Registration error:", error);
+    
+    console.error(
+      "Registration error:",
+      error instanceof Error ? error.message : String(error)
+    );
+
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Something went wrong during registration" },
       { status: 500 }
     );
+  } finally {
+    // Ensure Prisma client is disconnected
+    await prisma.$disconnect();
   }
 }

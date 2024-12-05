@@ -94,13 +94,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    
+    // Create uploads directory
     await mkdir(uploadDir, { recursive: true });
 
-   
+    // Parse form data
     const formData = await req.formData();
 
-    
+    // Extract form fields
     const title = formData.get("title");
     const description = formData.get("description");
     const price = formData.get("price");
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
     const history = formData.get("history");
     const userId = formData.get("userId");
 
-    
+    // Validate required fields
     const requiredFields = [
       { name: "title", value: title },
       { name: "description", value: description },
@@ -133,17 +133,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-   
+    // Verify user exists
     const user = await prisma.user.findUnique({
       where: { id: parseInt(userId as string) },
-      select: { id: true },
+      select: { id: true, name: true },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    
+    // Handle image uploads
     const images: string[] = [];
     const imageFiles = formData.getAll("images") as File[];
 
@@ -155,13 +155,13 @@ export async function POST(req: NextRequest) {
         const filename = `${Date.now()}-${file.name}`;
         const filepath = path.join(uploadDir, filename);
 
-        
+        // Write file to uploads directory
         await writeFile(filepath, buffer);
         images.push(`/uploads/tractors/${filename}`);
       }
     }
 
-    
+    // Create tractor listing
     const newTractor = await prisma.tractor.create({
       data: {
         title: title as string,
@@ -175,6 +175,23 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // Create activity log for admin dashboard
+    await prisma.adminActivityLog.create({
+      data: {
+        type: "TRACTOR_LISTING_CREATED",
+        description: `New tractor listing created by ${user.name}`,
+        details: JSON.stringify({
+          tractorId: newTractor.id,
+          tractorTitle: newTractor.title,
+          sellerId: user.id,
+          sellerName: user.name,
+          price: newTractor.price,
+          location: newTractor.location,
+        }),
+        timestamp: new Date(),
+      },
+    });
+
     return NextResponse.json(
       {
         message: "Tractor listing created successfully",
@@ -183,7 +200,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-   
+    // Error handling
     if (error instanceof Error) {
       console.error("Tractor creation error:", {
         message: error.message,
@@ -194,7 +211,6 @@ export async function POST(req: NextRequest) {
       console.error("Unexpected error during tractor creation:", error);
     }
 
-    
     return NextResponse.json(
       {
         error: "An error occurred while creating the listing",

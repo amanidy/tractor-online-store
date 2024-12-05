@@ -19,17 +19,26 @@ model User {
   email           String   @unique
   phone           String?  @unique
   password        String
-  passwordHash    String
+  
   isVerified      Boolean  @default(false)
-  role            String   @default("buyer") // "buyer" or "seller"
+  role            String   
   createdAt       DateTime @default(now())
-  userrole        UserRole @default(SELLER)
+  userrole        UserRole 
 
   tractors        Tractor[]
   listings        Listing[]
   purchases       Transaction[] @relation("BuyerTransactions")
   sales           Transaction[] @relation("SellerTransactions")
   qualityReports   QualityReport[] @relation("ReportedByReports") // Relation to QualityReport
+
+  dealer        Dealer?
+}
+
+enum UserRole {
+  ADMIN
+  SELLER
+  BUYER
+  DEALER
 }
 
 model Tractor {
@@ -46,10 +55,12 @@ model Tractor {
   createdAt       DateTime @default(now())
   inquiries       Inquiry[]  
   sales           Sale[]
-}
+
+  isApproved    Boolean  @default(false) 
+  }
 
 model Inquiry {
-  id              Int      @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   tractorId       Int
   name            String
   email           String
@@ -69,11 +80,7 @@ model Sale {
   tractor         Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
 }
 
-enum UserRole {
-  ADMIN
-  SELLER
-  BUYER
-}
+
 
 // Listing model for tractors and agricultural implements
 model Listing {
@@ -165,4 +172,52 @@ enum QualityReportStatus {
   INVESTIGATED
   RESOLVED
   CLOSED
+}
+
+
+model AdminActivityLog {
+  id          Int      @id @default(autoincrement())
+  type        String   // e.g., 'TRACTOR_LISTING_CREATED', 'USER_REGISTERED', etc.
+  description String
+  details     String?  // JSON string to store additional context
+  timestamp   DateTime @default(now())
+
+  @@index([type])
+  @@index([timestamp])
+}
+
+
+enum DealerType{
+  TractorParts
+  EquipmentSupplier
+  Comprehensive
+}
+
+model Dealer {
+  id            Int       @id @default(autoincrement())
+  name          String
+  location      String
+  contactEmail  String
+  contactPhone  String
+  dealerType    DealerType
+  specialties   String[]
+  rating        Float     @default(0.0)
+  verified      Boolean   @default(false)
+  userId        Int       @unique
+  user          User      @relation(fields: [userId], references: [id])
+  products      Product[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String
+  category    String
+  price       Decimal
+  inStock     Boolean   @default(true)
+  dealerId    Int
+  dealer      Dealer    @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

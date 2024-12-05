@@ -2,7 +2,9 @@
   "name": "tractor-online-store",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "seed": "ts-node --esm prisma/seed.ts",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
@@ -10,26 +12,31 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.0.1",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "clsx": "^2.1.1",
     "formidable": "^3.5.2",
     "lucide-react": "^0.462.0",
     "next": "15.0.3",
-    "prisma": "^5.22.0",
+    "next-auth": "^5.0.0-beta.25",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/formidable": "^3.4.5",
-    "@types/node": "^20",
+    "@types/node": "^20.17.9",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
+    "prisma": "^6.0.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
