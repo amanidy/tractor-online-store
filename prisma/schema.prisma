@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name            String
   email           String   @unique
   phone           String?  @unique
@@ -42,26 +42,61 @@ enum UserRole {
 }
 
 model Tractor {
-  id              Int      @id @default(autoincrement())
-  title           String
-  description     String
-  price           Float
-  location        String
-  specifications  String
-  history         String
-  images          String[] 
-  sellerId        Int
+ id        String   @id @default(uuid())
+  title           String  @db.Text
+  description     String? @db.Text
+  price           Float?
+  location        String?
+  specifications  String?
+  history         String?
+  images          String[]
+  imageUrl        String? @db.Text
+  sellerId        String
   seller          User     @relation(fields: [sellerId], references: [id])
   createdAt       DateTime @default(now())
+  updatedAt       DateTime  @updatedAt
   inquiries       Inquiry[]  
   sales           Sale[]
 
+  attachments Attachment[]
+
   isApproved    Boolean  @default(false) 
+
+  categoryId  String?
+
+  category Category? @relation(fields: [categoryId],references: [id])
+
+
+  @@index([categoryId])
+    details Detail[]
+  purchases Purchase[]
+}
+
+  model Category{
+    id        String   @id @default(uuid())
+    name      String @unique
+    tractors Tractor[]
+
+  }
+
+  model Attachment{
+
+    id        String   @id @default(uuid())
+    name      String
+    url       String @db.Text
+    tractorId String
+    tractor Tractor @relation(fields: [tractorId],references: [id],onDelete: Cascade)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime  @updatedAt
+
+    @@index([tractorId])
+
+
   }
 
 model Inquiry {
-  id        Int      @id @default(autoincrement())
-  tractorId       Int
+  id        String   @id @default(uuid())
+  tractorId       String
   name            String
   email           String
   message         String
@@ -71,8 +106,8 @@ model Inquiry {
 }
 
 model Sale {
-  id              Int      @id @default(autoincrement())
-  tractorId       Int
+  id        String   @id @default(uuid())
+  tractorId       String
   buyerName       String
   price           Float
   createdAt       DateTime @default(now())
@@ -97,7 +132,7 @@ model Listing {
   images          String[]
   status          ListingStatus    @default(PENDING)
   seller          User            @relation(fields: [sellerId], references: [id])
-  sellerId        Int
+  sellerId        String
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   transactions    Transaction[]
@@ -126,9 +161,9 @@ model Transaction {
   listing         Listing          @relation(fields: [listingId], references: [id])
   listingId       String
   buyer           User            @relation("BuyerTransactions", fields: [buyerId], references: [id])
-  buyerId         Int
+  buyerId         String
   seller          User            @relation("SellerTransactions", fields: [sellerId], references: [id])
-  sellerId        Int
+  sellerId        String
   price           Float
   status          TransactionStatus @default(PENDING)
   createdAt       DateTime         @default(now())
@@ -150,7 +185,7 @@ model QualityReport {
   listing         Listing         @relation(fields: [listingId], references: [id])
   listingId       String
   reportedBy      User           @relation("ReportedByReports", fields: [reportedById], references: [id])
-  reportedById    Int
+  reportedById    String
   description     String
   severity        QualitySeverity
   status          QualityReportStatus @default(OPEN)
@@ -176,7 +211,7 @@ enum QualityReportStatus {
 
 
 model AdminActivityLog {
-  id          Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   type        String   // e.g., 'TRACTOR_LISTING_CREATED', 'USER_REGISTERED', etc.
   description String
   details     String?  // JSON string to store additional context
@@ -194,7 +229,7 @@ enum DealerType{
 }
 
 model Dealer {
-  id            Int       @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name          String
   location      String
   contactEmail  String
@@ -203,7 +238,7 @@ model Dealer {
   specialties   String[]
   rating        Float     @default(0.0)
   verified      Boolean   @default(false)
-  userId        Int       @unique
+  userId        String       @unique
   user          User      @relation(fields: [userId], references: [id])
   products      Product[]
   createdAt     DateTime  @default(now())
@@ -211,13 +246,93 @@ model Dealer {
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name        String
   category    String
   price       Decimal
   inStock     Boolean   @default(true)
-  dealerId    Int
+  dealerId    String
   dealer      Dealer    @relation(fields: [dealerId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Detail{
+  id        String   @id @default(uuid())
+  title     String
+  description String? @db.Text
+  videoUrl    String? @db.Text
+  position    Int
+  isVerified  Boolean @default(false)
+  isNegotiable Boolean @default(false)
+
+  isPublished Boolean @default(false)
+  isStandard Boolean @default(false)
+
+
+  muxData MuxData?
+
+
+  tractorId  String
+  tractor Tractor @relation(fields: [tractorId],references: [id], onDelete: Cascade)
+
+  viewingProgress  ViewingProgress[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([tractorId])
+}
+
+model MuxData{
+  id        String   @id @default(uuid())
+  detailId  String @unique
+  assetId   String
+  playbackId String?
+
+   detail Detail @relation(fields: [detailId],references: [id], onDelete: Cascade)
+}
+
+model ViewingProgress{
+  id        String   @id @default(uuid())
+  userId    String
+
+
+  detailId  String
+  detail Detail @relation(fields: [detailId],references: [id], onDelete: Cascade)
+
+  isCompleted  Boolean @default(false)
+
+   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([detailId])
+  @@unique([userId,detailId])
+
+}
+
+
+model Purchase{
+   id        String   @id @default(uuid())
+   userId    String
+
+   tractorId  String
+
+   tractor Tractor @relation(fields: [tractorId],references: [id], onDelete: Cascade)
+
+   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([tractorId])
+}
+
+model StripeCustomer{
+  id        String   @id @default(uuid())
+  userId    String @unique
+  stripeCustomerId String @unique
+
+
+   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
 }
