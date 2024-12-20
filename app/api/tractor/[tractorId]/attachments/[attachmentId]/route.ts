@@ -1,10 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 
 
 export async function DELETE(
+  req:NextRequest | Request,
   { params }: { params: { tractorId: string; attachmentId: string } }
 ) {
   try {
