@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { NextApiRequest } from 'next';
+
 
 const prisma = new PrismaClient();
 
@@ -21,14 +21,14 @@ interface Product {
   inStock: boolean;
 }
 
-export async function GET(req:NextApiRequest) {
+export async function GET(req:NextRequest) {
     try {
-        const { 
-            search = '',
-            type = 'All',
-            page = 1,
-            pageSize =12
-        } = req.query;
+        const searchParams = req.nextUrl.searchParams;
+
+        const search = searchParams.get("search") || "";
+        const type = searchParams.get("type") || "All";
+        const page = Number(searchParams.get("page")) || 1;
+        const pageSize = Number(searchParams.get("pageSize")) || 12;
 
         const filterConditions: FilterConditions = {};
         if (type !== "All") {
