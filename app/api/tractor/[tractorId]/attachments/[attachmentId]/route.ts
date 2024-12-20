@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { tractorId: string; attachmentId: string } }
+  req: NextRequest,{ params }: { params: { tractorId: string; attachmentId: string } }
 ) {
   try {
     const { userId } = await auth();
@@ -19,7 +18,7 @@ export async function DELETE(
     });
 
     if (!sellerOwner) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json("Unauthorized", { status: 401 });
     }
 
     const attachment = await db.attachment.delete({
@@ -29,8 +28,6 @@ export async function DELETE(
     return NextResponse.json(attachment);
   } catch (error) {
     console.error("Error deleting attachment:", error);
-    return new NextResponse("Internal server error", {
-      status: 500,
-    });
+    return NextResponse.json("Internal server error", { status: 500 });
   }
 }
