@@ -4,6 +4,15 @@ import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 
+export const runtime = "nodejs";
+
+
+console.log("ENV CHECK:", {
+  MUX_TOKEN_ID: process.env.MUX_TOKEN_ID,
+  HAS_SECRET: !!process.env.MUX_TOKEN_SECRET,
+});
+
+
 const muxClient = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
   tokenSecret: process.env.MUX_TOKEN_SECRET,
