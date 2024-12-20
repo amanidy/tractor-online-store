@@ -14,9 +14,8 @@ import { DetailsForm } from "./_components/details-form";
 
 
 interface TractorPageProps {
-  params: {
-    tractorId: string;
-  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: any;
 }
 
 const TractorIdPage = async ({ params }: TractorPageProps) => {
@@ -27,9 +26,11 @@ const TractorIdPage = async ({ params }: TractorPageProps) => {
         return redirect("/seller");
     }
 
+    const { tractorId } = params;
+
     const tractor = await db.tractor.findUnique({
         where: {
-            id:  params.tractorId,
+            id:  tractorId,
             sellerId:userId,
         },
         include: {

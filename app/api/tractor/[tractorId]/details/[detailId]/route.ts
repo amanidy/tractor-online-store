@@ -9,10 +9,9 @@ const muxClient = new Mux({
   tokenSecret: process.env.MUX_TOKEN_SECRET!,
 });
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { tractorId: string; detailId: string } }
-) {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function PATCH(req: Request, { params }: any): Promise<NextResponse> {
   try {
     const { userId } = await auth();
     const { ...values } = await req.json();
@@ -21,9 +20,12 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    
+    const { tractorId, detailId } = params;
+
     const sellerOwner = await db.tractor.findUnique({
       where: {
-        id: params.tractorId,
+        id: tractorId,
         sellerId: userId,
       },
     });
@@ -34,8 +36,8 @@ export async function PATCH(
 
     const detail = await db.detail.update({
       where: {
-        id: params.detailId,
-        tractorId: params.tractorId,
+        id: detailId,
+        tractorId: tractorId,
       },
       data: {
         ...values,
@@ -45,7 +47,7 @@ export async function PATCH(
     if (values.videoUrl) {
       const existingMuxData = await db.muxData.findFirst({
         where: {
-          detailId: params.detailId,
+          detailId: detailId,
         },
       });
 
@@ -66,7 +68,7 @@ export async function PATCH(
 
       await db.muxData.create({
         data: {
-          detailId: params.detailId,
+          detailId: detailId,
           assetId: asset.id,
           playbackId: asset.playback_ids?.[0]?.id,
         },

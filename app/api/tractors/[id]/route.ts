@@ -6,13 +6,14 @@ const prisma = new PrismaClient();
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { params }: any
+): Promise<NextResponse> {
   try {
-    const id = Number(params.id);
+    const { id } = params;
 
     const tractor = await prisma.tractor.update({
-      where: { id },
+      where: { id:id },
       data: {
         isApproved: true,
       },
@@ -28,12 +29,14 @@ export async function PUT(
   }
 }
 
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { params }: any
+): Promise<NextResponse> {
   try {
-    const id = Number(params.id);
+    const { id } = params;
 
     // Validate the ID
     if (isNaN(id)) {
@@ -44,7 +47,7 @@ export async function DELETE(
     }
 
     const deletedTractor = await prisma.tractor.delete({
-      where: { id },
+      where: { id: id },
     });
 
     return NextResponse.json(deletedTractor);

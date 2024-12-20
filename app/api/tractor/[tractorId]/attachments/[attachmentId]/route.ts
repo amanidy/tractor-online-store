@@ -2,14 +2,11 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
-interface RouteContext {
-  params: {
-    tractorId: string;
-    attachmentId: string;
-  };
-}
-
-export async function DELETE(request: Request, { params }: RouteContext) {
+export async function DELETE(
+  req: Request,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { params }: any
+): Promise<NextResponse> {
   try {
     const { userId } = await auth();
     if (!userId) {

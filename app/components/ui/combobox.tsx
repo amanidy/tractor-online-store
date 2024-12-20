@@ -12,7 +12,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "./command"
+} from "./command";
 import {
   Popover,
   PopoverContent,
