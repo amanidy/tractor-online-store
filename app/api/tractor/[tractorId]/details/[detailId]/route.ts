@@ -5,8 +5,8 @@ import { db } from "../../../../../lib/db";
 
 
 const muxClient = new Mux({
-  tokenId: process.env.MUX_TOKEN_ID!,
-  tokenSecret: process.env.MUX_TOKEN_SECRET!,
+  tokenId: process.env.MUX_TOKEN_ID,
+  tokenSecret: process.env.MUX_TOKEN_SECRET,
 });
 
 
