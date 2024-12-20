@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 export async function DELETE(
-  req: NextRequest,{ params }: { params: { tractorId: string; attachmentId: string } }
+  req: Request,
+  { params }: { params: { tractorId: string; attachmentId: string } }
 ) {
   try {
     const { userId } = await auth();
