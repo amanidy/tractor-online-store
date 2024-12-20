@@ -12,10 +12,14 @@ import { AttachmentForm } from "./_components/attachment-form";
 import { DetailsForm } from "./_components/details-form";
 
 
-const TractorIdPage = async ({
-        params
-    }:{params :{tractorId: string}}
-) => {
+
+interface TractorPageProps {
+  params: {
+    tractorId: string;
+  };
+}
+
+const TractorIdPage = async ({ params }: TractorPageProps) => {
 
     const { userId } = await auth();
 
@@ -25,7 +29,7 @@ const TractorIdPage = async ({
 
     const tractor = await db.tractor.findUnique({
         where: {
-            id: params.tractorId,
+            id:  params.tractorId,
             sellerId:userId,
         },
         include: {
