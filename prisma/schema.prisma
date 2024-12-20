@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,24 +8,232 @@ datasource db {
 }
 
 model User {
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  phone          String?         @unique
+  password       String
+  isVerified     Boolean         @default(false)
+  role           String
+  createdAt      DateTime        @default(now())
+  userrole       UserRole
+  dealer         Dealer?
+  listings       Listing[]
+  qualityReports QualityReport[] @relation("ReportedByReports")
+  tractors       Tractor[]
+  purchases      Transaction[]   @relation("BuyerTransactions")
+  sales          Transaction[]   @relation("SellerTransactions")
+}
+
+model Tractor {
+  id             String       @id @default(uuid())
+  title          String
+  description    String?
+  price          Float?
+  location       String?
+  specifications String?
+  history        String?
+  images         String[]
+  sellerId       String
+  createdAt      DateTime     @default(now())
+  isApproved     Boolean      @default(false)
+  categoryId     String?
+  imageUrl       String?
+  updatedAt      DateTime     @updatedAt
+  attachments    Attachment[]
+  details        Detail[]
+  inquiries      Inquiry[]
+  purchases      Purchase[]
+  sales          Sale[]
+  category       Category?    @relation(fields: [categoryId], references: [id])
+  seller         User         @relation(fields: [sellerId], references: [id])
+
+  @@index([categoryId])
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  tractors Tractor[]
+}
+
+model Attachment {
   id        String   @id @default(uuid())
-  name            String
-  email           String   @unique
-  phone           String?  @unique
-  password        String
-  
-  isVerified      Boolean  @default(false)
-  role            String   
-  createdAt       DateTime @default(now())
-  userrole        UserRole 
+  name      String
+  url       String
+  tractorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tractor   Tractor  @relation(fields: [tractorId], references: [id], onDelete: Cascade)
 
-  tractors        Tractor[]
-  listings        Listing[]
-  purchases       Transaction[] @relation("BuyerTransactions")
-  sales           Transaction[] @relation("SellerTransactions")
-  qualityReports   QualityReport[] @relation("ReportedByReports") // Relation to QualityReport
+  @@index([tractorId])
+}
 
-  dealer        Dealer?
+model Inquiry {
+  id        String   @id @default(uuid())
+  tractorId String
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  tractor   Tractor  @relation(fields: [tractorId], references: [id])
+}
+
+model Sale {
+  id        String   @id @default(uuid())
+  tractorId String
+  buyerName String
+  price     Float
+  createdAt DateTime @default(now())
+  tractor   Tractor  @relation(fields: [tractorId], references: [id])
+}
+
+model Listing {
+  id             String           @id @default(cuid())
+  title          String
+  description    String
+  category       String
+  make           String
+  model          String
+  year           Int
+  condition      ListingCondition
+  price          Float
+  location       String
+  images         String[]
+  status         ListingStatus    @default(PENDING)
+  sellerId       String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  seller         User             @relation(fields: [sellerId], references: [id])
+  qualityReports QualityReport[]
+  transactions   Transaction[]
+}
+
+model Transaction {
+  id        String            @id @default(cuid())
+  listingId String
+  buyerId   String
+  sellerId  String
+  price     Float
+  status    TransactionStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  buyer     User              @relation("BuyerTransactions", fields: [buyerId], references: [id])
+  listing   Listing           @relation(fields: [listingId], references: [id])
+  seller    User              @relation("SellerTransactions", fields: [sellerId], references: [id])
+}
+
+model QualityReport {
+  id           String              @id @default(cuid())
+  listingId    String
+  reportedById String
+  description  String
+  severity     QualitySeverity
+  status       QualityReportStatus @default(OPEN)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  listing      Listing             @relation(fields: [listingId], references: [id])
+  reportedBy   User                @relation("ReportedByReports", fields: [reportedById], references: [id])
+}
+
+model AdminActivityLog {
+  id          String   @id @default(uuid())
+  type        String
+  description String
+  details     String?
+  timestamp   DateTime @default(now())
+
+  @@index([type])
+  @@index([timestamp])
+}
+
+model Dealer {
+  id           String     @id @default(uuid())
+  name         String
+  location     String
+  contactEmail String
+  contactPhone String
+  dealerType   DealerType
+  specialties  String[]
+  rating       Float      @default(0.0)
+  verified     Boolean    @default(false)
+  userId       String     @unique
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id])
+  products     Product[]
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  price     Decimal
+  inStock   Boolean  @default(true)
+  dealerId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dealer    Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+}
+
+model Detail {
+  id              String            @id @default(uuid())
+  title           String
+  description     String?
+  videoUrl        String?
+  position        Int
+  isVerified      Boolean           @default(false)
+  isNegotiable    Boolean           @default(false)
+  tractorId       String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  isPublished     Boolean           @default(false)
+  isStandard      Boolean           @default(false)
+  tractor         Tractor           @relation(fields: [tractorId], references: [id], onDelete: Cascade)
+  muxData         MuxData?
+  viewingProgress ViewingProgress[]
+
+  @@index([tractorId])
+}
+
+model MuxData {
+  id         String  @id @default(uuid())
+  detailId   String  @unique
+  assetId    String
+  playbackId String?
+  detail     Detail  @relation(fields: [detailId], references: [id], onDelete: Cascade)
+}
+
+model ViewingProgress {
+  id          String   @id @default(uuid())
+  userId      String
+  detailId    String
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  detail      Detail   @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, detailId])
+  @@index([detailId])
+}
+
+model Purchase {
+  id        String   @id @default(uuid())
+  userId    String
+  tractorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tractor   Tractor  @relation(fields: [tractorId], references: [id], onDelete: Cascade)
+
+  @@index([tractorId])
+}
+
+model StripeCustomer {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 enum UserRole {
@@ -41,112 +243,12 @@ enum UserRole {
   DEALER
 }
 
-model Tractor {
- id        String   @id @default(uuid())
-  title           String  @db.Text
-  description     String? @db.Text
-  price           Float?
-  location        String?
-  specifications  String?
-  history         String?
-  images          String[]
-  imageUrl        String? @db.Text
-  sellerId        String
-  seller          User     @relation(fields: [sellerId], references: [id])
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime  @updatedAt
-  inquiries       Inquiry[]  
-  sales           Sale[]
-
-  attachments Attachment[]
-
-  isApproved    Boolean  @default(false) 
-
-  categoryId  String?
-
-  category Category? @relation(fields: [categoryId],references: [id])
-
-
-  @@index([categoryId])
-    details Detail[]
-  purchases Purchase[]
-}
-
-  model Category{
-    id        String   @id @default(uuid())
-    name      String @unique
-    tractors Tractor[]
-
-  }
-
-  model Attachment{
-
-    id        String   @id @default(uuid())
-    name      String
-    url       String @db.Text
-    tractorId String
-    tractor Tractor @relation(fields: [tractorId],references: [id],onDelete: Cascade)
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime  @updatedAt
-
-    @@index([tractorId])
-
-
-  }
-
-model Inquiry {
-  id        String   @id @default(uuid())
-  tractorId       String
-  name            String
-  email           String
-  message         String
-  createdAt       DateTime @default(now())
-
-  tractor         Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
-}
-
-model Sale {
-  id        String   @id @default(uuid())
-  tractorId       String
-  buyerName       String
-  price           Float
-  createdAt       DateTime @default(now())
-  
-  tractor         Tractor  @relation(fields: [tractorId], references: [id])  // Relation to Tractor
-}
-
-
-
-// Listing model for tractors and agricultural implements
-model Listing {
-  id              String          @id @default(cuid())
-  title           String
-  description     String
-  category        String
-  make            String
-  model           String
-  year            Int
-  condition       ListingCondition
-  price           Float
-  location        String
-  images          String[]
-  status          ListingStatus    @default(PENDING)
-  seller          User            @relation(fields: [sellerId], references: [id])
-  sellerId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  transactions    Transaction[]
-  qualityReports  QualityReport[]
-}
-
-// Enum for listing status
 enum ListingStatus {
   PENDING
   APPROVED
   REJECTED
 }
 
-// Enum for listing condition
 enum ListingCondition {
   NEW
   EXCELLENT
@@ -155,22 +257,6 @@ enum ListingCondition {
   POOR
 }
 
-// Transaction model to track sales
-model Transaction {
-  id              String            @id @default(cuid())
-  listing         Listing          @relation(fields: [listingId], references: [id])
-  listingId       String
-  buyer           User            @relation("BuyerTransactions", fields: [buyerId], references: [id])
-  buyerId         String
-  seller          User            @relation("SellerTransactions", fields: [sellerId], references: [id])
-  sellerId        String
-  price           Float
-  status          TransactionStatus @default(PENDING)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-}
-
-// Enum for transaction status
 enum TransactionStatus {
   PENDING
   APPROVED
@@ -179,21 +265,6 @@ enum TransactionStatus {
   CANCELLED
 }
 
-// Quality Report model for tracking and managing quality concerns
-model QualityReport {
-  id              String           @id @default(cuid())
-  listing         Listing         @relation(fields: [listingId], references: [id])
-  listingId       String
-  reportedBy      User           @relation("ReportedByReports", fields: [reportedById], references: [id])
-  reportedById    String
-  description     String
-  severity        QualitySeverity
-  status          QualityReportStatus @default(OPEN)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-}
-
-// Enum for quality report severity
 enum QualitySeverity {
   LOW
   MEDIUM
@@ -201,7 +272,6 @@ enum QualitySeverity {
   CRITICAL
 }
 
-// Enum for quality report status
 enum QualityReportStatus {
   OPEN
   INVESTIGATED
@@ -209,130 +279,8 @@ enum QualityReportStatus {
   CLOSED
 }
 
-
-model AdminActivityLog {
-  id        String   @id @default(uuid())
-  type        String   // e.g., 'TRACTOR_LISTING_CREATED', 'USER_REGISTERED', etc.
-  description String
-  details     String?  // JSON string to store additional context
-  timestamp   DateTime @default(now())
-
-  @@index([type])
-  @@index([timestamp])
-}
-
-
-enum DealerType{
+enum DealerType {
   TractorParts
   EquipmentSupplier
   Comprehensive
-}
-
-model Dealer {
-  id        String   @id @default(uuid())
-  name          String
-  location      String
-  contactEmail  String
-  contactPhone  String
-  dealerType    DealerType
-  specialties   String[]
-  rating        Float     @default(0.0)
-  verified      Boolean   @default(false)
-  userId        String       @unique
-  user          User      @relation(fields: [userId], references: [id])
-  products      Product[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
-model Product {
-  id        String   @id @default(uuid())
-  name        String
-  category    String
-  price       Decimal
-  inStock     Boolean   @default(true)
-  dealerId    String
-  dealer      Dealer    @relation(fields: [dealerId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model Detail{
-  id        String   @id @default(uuid())
-  title     String
-  description String? @db.Text
-  videoUrl    String? @db.Text
-  position    Int
-  isVerified  Boolean @default(false)
-  isNegotiable Boolean @default(false)
-
-  isPublished Boolean @default(false)
-  isStandard Boolean @default(false)
-
-
-  muxData MuxData?
-
-
-  tractorId  String
-  tractor Tractor @relation(fields: [tractorId],references: [id], onDelete: Cascade)
-
-  viewingProgress  ViewingProgress[]
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([tractorId])
-}
-
-model MuxData{
-  id        String   @id @default(uuid())
-  detailId  String @unique
-  assetId   String
-  playbackId String?
-
-   detail Detail @relation(fields: [detailId],references: [id], onDelete: Cascade)
-}
-
-model ViewingProgress{
-  id        String   @id @default(uuid())
-  userId    String
-
-
-  detailId  String
-  detail Detail @relation(fields: [detailId],references: [id], onDelete: Cascade)
-
-  isCompleted  Boolean @default(false)
-
-   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([detailId])
-  @@unique([userId,detailId])
-
-}
-
-
-model Purchase{
-   id        String   @id @default(uuid())
-   userId    String
-
-   tractorId  String
-
-   tractor Tractor @relation(fields: [tractorId],references: [id], onDelete: Cascade)
-
-   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([tractorId])
-}
-
-model StripeCustomer{
-  id        String   @id @default(uuid())
-  userId    String @unique
-  stripeCustomerId String @unique
-
-
-   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
 }
