@@ -4,7 +4,12 @@ import { db } from "../../../../../lib/db";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { tractorId: string; attachmentId: string } }
+  context: {
+    params: {
+      tractorId: string;
+      attachmentId: string;
+    };
+  }
 ) {
   try {
     const { userId } = await auth();
@@ -12,7 +17,7 @@ export async function DELETE(
       return NextResponse.json("Unauthorized", { status: 401 });
     }
 
-    const { tractorId, attachmentId } = params;
+    const { tractorId, attachmentId } = context.params;
 
     const sellerOwner = await db.tractor.findUnique({
       where: { id: tractorId, sellerId: userId },
