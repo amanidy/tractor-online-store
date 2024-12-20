@@ -1,22 +1,19 @@
 import { auth } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
-interface RouteParams {
-  params: {
-    tractorId: string;
-    attachmentId: string;
-  };
-}
 
-export async function DELETE(request: NextRequest, context: RouteParams) {
+
+export async function DELETE(
+  { params }: { params: { tractorId: string; attachmentId: string } }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { params } = context;
+  
 
     const sellerOwner = await db.tractor.findUnique({
       where: {
