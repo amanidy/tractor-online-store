@@ -2,15 +2,14 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
-export async function DELETE(
-  request: Request,
-  context: {
-    params: {
-      tractorId: string;
-      attachmentId: string;
-    };
-  }
-) {
+interface RouteContext {
+  params: {
+    tractorId: string;
+    attachmentId: string;
+  };
+}
+
+export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -19,18 +18,19 @@ export async function DELETE(
 
     const sellerOwner = await db.tractor.findUnique({
       where: {
-        id: context.params.tractorId,
+        id: params.tractorId,
         sellerId: userId,
       },
     });
+
     if (!sellerOwner) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const attachment = await db.attachment.delete({
       where: {
-        tractorId: context.params.tractorId,
-        id: context.params.attachmentId,
+        tractorId: params.tractorId,
+        id: params.attachmentId,
       },
     });
 
