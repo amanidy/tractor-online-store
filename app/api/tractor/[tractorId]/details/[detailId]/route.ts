@@ -4,6 +4,17 @@ import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 
+const testMuxConfig = {
+  tokenId: process.env.MUX_TOKEN_ID,
+  tokenSecret: process.env.MUX_TOKEN_SECRET,
+};
+
+console.log("Config Test:", testMuxConfig);
+
+// Then create your client
+const muxClient = new Mux(testMuxConfig);
+
+
 export const runtime = "nodejs";
 
 
@@ -13,11 +24,104 @@ console.log("ENV CHECK:", {
 });
 
 
-const muxClient = new Mux({
+{
+  /*  const muxClient = new Mux({
   tokenId: process.env.MUX_TOKEN_ID,
   tokenSecret: process.env.MUX_TOKEN_SECRET,
-});
+});*/
+} 
 
+
+export async function DELETE(
+  req: Request,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  {params} :any
+): Promise<NextResponse>{
+
+  try {
+    const { userId } = await auth();
+
+    
+  if (!userId) {
+  return new NextResponse("Unauthorized", { status: 401 });
+}
+
+    const { tractorId, detailId } = params;
+
+    const sellerOwner = await db.tractor.findUnique({
+      where: {
+        id: tractorId,
+        sellerId: userId,
+      },
+    });
+
+    if (!sellerOwner) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const detail = await db.detail.findUnique({
+      where: {
+        id: detailId,
+        tractorId: tractorId,
+      }
+    });
+
+    if (!detail) {
+      return new NextResponse("Not Found",{status:404})
+    }
+
+    if (detail.videoUrl) {
+      const existingMuxData = await db.muxData.findFirst({
+        where: {
+          detailId: detailId
+        }
+      });
+
+      if (existingMuxData) {
+        await muxClient.video.assets.delete(existingMuxData.assetId);
+        await db.muxData.delete({
+          where: {
+            id:existingMuxData.id,
+          }
+        })
+      }
+    }
+
+    const deletedDetail = await db.detail.delete({
+      where: {
+        id:detailId,
+      }
+    })
+
+    const publishedDetailsInTractor = await db.detail.findMany({
+      where: {
+        tractorId: tractorId,
+        isPublished: true,
+      }
+    });
+
+    if (!publishedDetailsInTractor.length) {
+      await db.detail.update({
+        where: {
+          id: tractorId,
+          
+        },
+        data: {
+          isPublished:false,
+        }
+      })
+    }
+
+    return NextResponse.json(deletedDetail);
+    
+  } catch (error) {
+    console.log("[DETAIL_ID_DELETE]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+
+
+  
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function PATCH(req: Request, { params }: any): Promise<NextResponse> {

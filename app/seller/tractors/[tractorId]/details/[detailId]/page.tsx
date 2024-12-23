@@ -7,6 +7,8 @@ import { IconBadge } from "../../../../../components/icon-badge";
 import { DetailTitleForm } from "./_components/detail-title-form";
 import { DetailDescriptionForm } from "./_components/detail-description-form ";
 import { DetailVideoForm } from "./_components/detail-video-form";
+import { Banner } from "../../../../../components/banner";
+import { DetailActions } from "./_components/detail-actions";
 
 interface DetailPageProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,7 +49,16 @@ const DetailIdPage = async ({ params }: DetailPageProps) => {
 
     const completionText = `(${completedFields}/${totalFields})`;
 
+    const isComplete = requiredFields.every(Boolean);
+
     return (
+        <>
+            {!detail.isPublished && (
+                <Banner
+                    variant="warning"
+                    label="This detail is unpublished . It will not be visible in tractor page."
+                />
+            )}
         <div className="p-6 bg-white">
             <div className="flex items-center justify-between">
                 <div className="w-full">
@@ -67,7 +78,14 @@ const DetailIdPage = async ({ params }: DetailPageProps) => {
                             <span className="text-sm text-slate-700">
                                 Complete all fields {completionText}
                             </span>
-                        </div>
+                            </div>
+                            <DetailActions
+                                disabled={!isComplete}
+                                tractorId={tractorId}
+                                detailId={detailId}
+                                isPublished={detail.isPublished}
+                            
+                            />
                     </div>
                 </div>
             </div>
@@ -107,7 +125,8 @@ const DetailIdPage = async ({ params }: DetailPageProps) => {
                     />
                 </div>
             </div>
-        </div>
+            </div>
+            </>
     );
 };
 
