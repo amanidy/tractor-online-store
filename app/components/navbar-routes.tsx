@@ -5,6 +5,7 @@ import { UserButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname} from "next/navigation";
+import { SearchInput } from "./search-input";
 
 export const NavbarRoutes = () => {
     const pathname = usePathname();
@@ -13,11 +14,19 @@ export const NavbarRoutes = () => {
     const isBuyerPage = pathname?.includes("/tractors");
     const isAdminPage = pathname?.startsWith("/admin");
     const isDemoPage = pathname?.startsWith("/demo");
-    const isPlayerPage = pathname?.includes("/tractors");
+    const isTractorPage = pathname?.includes("/tractor");
 
-     return (  
+    const isSearchPage = pathname === "/seller/tractor";
+
+    return ( 
+        <>
+            {isSearchPage && (
+                <div className="hidden md:block">
+                    <SearchInput />
+                </div>
+            )}
          <div className="flex gap-x-2 ml-auto">
-             {isSellerPage || isBuyerPage || isAdminPage || isDemoPage || isPlayerPage ? (
+             {isSellerPage || isBuyerPage || isAdminPage || isDemoPage || isTractorPage ? (
                  
                  <Link href="/">
                     < Button size="sm" variant="ghost">
@@ -41,10 +50,8 @@ export const NavbarRoutes = () => {
              <UserButton
              afterSignOutUrl ="/"
              />
-             
-        
-             
-        </div>
+            </div>
+            </> 
     );
 }
  

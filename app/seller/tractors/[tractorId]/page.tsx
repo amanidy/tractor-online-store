@@ -10,6 +10,8 @@ import { CategoryForm } from "./_components/category-form";
 import { PriceForm } from "./_components/price-form ";
 import { AttachmentForm } from "./_components/attachment-form";
 import { DetailsForm } from "./_components/details-form";
+import { Banner } from "../../../components/banner";
+import { Actions } from "./_components/actions";
 
 
 
@@ -66,16 +68,25 @@ const TractorIdPage = async ({ params }: TractorPageProps) => {
         tractor.imageUrl,
         tractor.price,
         tractor.categoryId,
-        tractor.details.some(detail => detail.isVerified),
+        tractor.details.some(detail => detail.isPublished),
     ];
 
 
     const totalFields = requiredFields.length;
     const completedFields = requiredFields.filter(Boolean).length;
 
-    const completionText = `(${completedFields}/${totalFields})`
+    const completionText = `(${completedFields}/${totalFields})`;
+
+    const isComplete = requiredFields.every(Boolean);
+
 
     return ( 
+        <>
+            {!tractor.isApproved && (
+                <Banner
+                    label="This tractor is not approved . It will not be visible to the the buyer."
+                />
+            )}
         <div className="p-6 bg-white">
             <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-y-2">
@@ -84,8 +95,13 @@ const TractorIdPage = async ({ params }: TractorPageProps) => {
                     <span className="text-sm text-slate-700">
                         Complete all fields {completionText}
                     </span>
-
-                </div>
+                    </div>
+                    <Actions
+                        disabled={!isComplete}
+                        tractorId={tractorId}
+                        isApproved={tractor.isApproved}
+                    
+                    />
                 
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
@@ -163,7 +179,8 @@ const TractorIdPage = async ({ params }: TractorPageProps) => {
                 </div>
 
             </div>
-        </div>
+            </div>
+            </>
      );
 }
  

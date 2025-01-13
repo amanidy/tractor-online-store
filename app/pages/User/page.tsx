@@ -19,6 +19,12 @@ const UserProfile = () => {
       href: "/admin", 
       label: "Admin Dashboard", 
       className: "text-red-500 hover:text-red-600"
+    },
+    { 
+      role: "buyer", 
+      href: "/dashboard/buyer", 
+      label: "Buyer Dashboard", 
+      className: "text-red-500 hover:text-red-600"
     }
   ];
 

@@ -38,7 +38,7 @@ export async function PATCH(
       return new NextResponse("Detail not found", { status: 404 });
     }
 
-    // Fixed validation logic
+   
     if (!detail.title || !detail.description || !detail.videoUrl) {
       return new NextResponse("Missing required fields", { status: 400 });
     }

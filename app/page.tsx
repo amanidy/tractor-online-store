@@ -10,6 +10,7 @@ export default function Home() {
       <HeroSection />
       <FeaturedListings />
       <FiltersSection />
+      
       <Footer />
     </main>
   );

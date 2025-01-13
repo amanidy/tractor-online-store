@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -50,6 +51,7 @@ model Tractor {
   seller         User         @relation(fields: [sellerId], references: [id])
 
   @@index([categoryId])
+  @@index([title]) 
 }
 
 model Category {
@@ -195,6 +197,7 @@ model Detail {
   viewingProgress ViewingProgress[]
 
   @@index([tractorId])
+  UserProgress UserProgress[]
 }
 
 model MuxData {
@@ -226,7 +229,10 @@ model Purchase {
   updatedAt DateTime @updatedAt
   tractor   Tractor  @relation(fields: [tractorId], references: [id], onDelete: Cascade)
 
+ 
   @@index([tractorId])
+  
+  @@unique([userId,tractorId])
 }
 
 model StripeCustomer {
@@ -284,4 +290,23 @@ enum DealerType {
   TractorParts
   EquipmentSupplier
   Comprehensive
+}
+
+model UserProgress {
+  id String @id @default(uuid())
+  userId String
+
+  detailId String
+  detail   Detail  @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  isCompleted Boolean @default(false)
+
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([detailId])
+  @@unique([userId,detailId])
+
+
 }

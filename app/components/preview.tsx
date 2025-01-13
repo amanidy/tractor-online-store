@@ -1,8 +1,13 @@
-import { Editor } from 'react-draft-wysiwyg';
-import { EditorState,  convertFromRaw } from 'draft-js';
+'use client';
 
-export const DraftPreview = ({ value }: { value: string }) => {
+import dynamic from 'next/dynamic';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, convertFromRaw } from 'draft-js';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
+const DraftPreview = ({ value }: { value: string }) => {
   let editorState;
+  
   try {
     const contentState = convertFromRaw(JSON.parse(value));
     editorState = EditorState.createWithContent(contentState);
@@ -11,12 +16,18 @@ export const DraftPreview = ({ value }: { value: string }) => {
   }
 
   return (
-    <Editor
-      editorState={editorState}
-      readOnly
-      toolbarHidden
-    />
+    <div className="bg-white">
+      <Editor
+        editorState={editorState}
+        readOnly
+        toolbarHidden
+        editorClassName="prose max-w-full p-4"
+      />
+    </div>
   );
 };
 
-export default DraftPreview;
+
+export default dynamic(() => Promise.resolve(DraftPreview), {
+  ssr: false
+});

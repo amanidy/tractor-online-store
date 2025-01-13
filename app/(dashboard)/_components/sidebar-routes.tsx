@@ -15,7 +15,7 @@ const guestRoutes = [
     {
         icon: Compass,
         label: "Listings",
-        href:"/search"
+        href:"/buyer/search"
     },
     {
         icon: ContactRound,
@@ -30,7 +30,7 @@ const guestRoutes = [
     {
         icon: FileSymlink,
         label: "Register",
-        href:"/register"
+        href:"/pages/register"
     },
     {
         icon: BookOpenText,

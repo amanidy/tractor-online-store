@@ -5,6 +5,7 @@ import SideBar from './(dashboard)/_components/sidebar';
 import { Navbar } from './(dashboard)/_components/navbar';
 import { UserProvider } from "./context/userContext";
 import { ToastProvider } from './components/providers/toaster-provider';
+import { ConfettiProvider } from './components/providers/confetti-provider';
 
 export const metadata = {
   title: "AgriMarketplace",
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body className="bg-gray-100 min-h-screen">
 
           <UserProvider>
+            <ConfettiProvider />
             <ToastProvider />
             <div className="flex w-full h-screen">
               {/* Sidebar */}
