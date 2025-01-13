@@ -4,13 +4,16 @@ import { redirect } from "next/navigation";
 
 const TractorIdPage = async ({
      params
-}: {
-     params:{tractorId:string}
- }) => {
+}:
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+): Promise<JSX.Element> => {
+    
+    const tractorId = params;
 
     const tractor = await db.tractor.findUnique({
         where: {
-            id: params.tractorId,
+            id: tractorId,
         },
         include: {
             details: {

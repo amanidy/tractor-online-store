@@ -10,11 +10,15 @@ import { TractorNavbar } from "./_components/tractor-navbar";
 const TractorLayout = async ({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { tractorId: string };
-}) => {
+}:
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any
+): Promise<JSX.Element> => {
   const { userId } = await auth();
+  const tractorId = params;
+  const node: React.ReactNode = children;
+
+
   
   if (!userId) {
     return redirect("/");
@@ -22,7 +26,7 @@ const TractorLayout = async ({
 
   const tractor = await db.tractor.findUnique({
     where: {
-      id: params.tractorId,
+      id: tractorId,
     },
     include: {
       details: {
@@ -66,7 +70,7 @@ const TractorLayout = async ({
         />
       </div>
       <main className="md:pl-80 pt-[80px] h-full">
-        {children}
+        {node}
       </main>
     </div>
   );

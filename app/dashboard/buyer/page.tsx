@@ -6,7 +6,7 @@ import { getDashboardTractors } from "~/actions/get-dashboard-tractors";
 import { InfoCard } from "./_components/info-card";
 
 
-export async function BuyerDashboard() {
+const BuyerDashboard = async () => {
 
     const { userId } = await auth();
 
@@ -41,4 +41,6 @@ export async function BuyerDashboard() {
             
         </div>
     )
-}
+};
+
+export default BuyerDashboard;

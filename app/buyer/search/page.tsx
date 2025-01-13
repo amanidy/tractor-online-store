@@ -5,21 +5,21 @@ import { Categories } from "./_components/categories";
 import { redirect } from "next/navigation";
 import { TractorList } from "../../components/tractors-list";
 
-interface SearchPageProps{
-    searchParams: {
-        title: string;
-        categoryId: string;
-    }
-}
+
 
 
 
 const SearchPage = async ({
     searchParams
-
-}:SearchPageProps) => {
+}:
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+): Promise<JSX.Element> => {
 
     const { userId } = await auth();
+
+    const title = searchParams;
+    const categoryId = searchParams;
 
     if (!userId) {
         return redirect("/");
@@ -33,7 +33,8 @@ const SearchPage = async ({
 
     const tractors = await getTractors({
         userId,
-        ...searchParams,
+        title: title,
+        categoryId:categoryId,
     });
 
     return ( 
