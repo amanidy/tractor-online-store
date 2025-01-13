@@ -13,7 +13,8 @@ const DetailIdPage = async ({
     params
 }: {
     params: { tractorId: string; detailId: string }
-}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<any> => {
     const { userId } = await auth();
 
     

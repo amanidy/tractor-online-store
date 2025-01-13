@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "../../../../../../lib/utils";
 import { Detail} from "@prisma/client";
 import { DraftEditor } from "../../../../../../components/editor";
-import { DraftPreview } from "../../../../../../components/preview";
+import  DraftPreview  from "../../../../../../components/preview";
 
 
 interface DetailDescriptionFormProps{
