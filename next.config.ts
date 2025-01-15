@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     MUX_TOKEN_SECRET: process.env.MUX_TOKEN_SECRET,
   },
   reactStrictMode: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;

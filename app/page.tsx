@@ -18,7 +18,7 @@ export default function Home() {
   */}
 
   import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import { ArrowRight, ShoppingCart, Store } from "lucide-react";
 import { FeatureCard } from "./components/features-card";
 

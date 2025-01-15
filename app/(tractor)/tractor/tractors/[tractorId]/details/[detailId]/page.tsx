@@ -1,28 +1,32 @@
-import { Banner } from "@/components/banner";
+
+import { Banner } from "@/app/components/banner";
 import { redirect } from "next/navigation";
-import { getDetail } from "~/actions/get-details";
+//import { getDetail } from "~/actions/get-details";
 import { VideoPlayer } from "./_components/video-player";
 import { auth } from "@clerk/nextjs/server";
 import { TractorPurchaseButton } from "./_components/tractor-purchase-button";
-import { Separator } from "@/components/ui/separator";
-import Preview from "@/components/preview";
+import { Separator } from "@/app/components/ui/separator";
+
 import { File } from "lucide-react";
 import { TractorProgressButton } from "./_components/tractor-progress-button";
+import Preview from "@/app/components/preview";
+import { getDetail } from "@/actions/get-details";
 
-interface PageProps {
+
+type GeneratedPageProps = {
   params: {
     tractorId: string;
     detailId: string;
   };
-}
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
-export default async function DetailIdPage({
-  params
-}: PageProps): Promise<JSX.Element> {
+async function DetailIdPage(props: GeneratedPageProps) {
+  const { params } = props;
   const { userId } = await auth();
 
   if (!userId) {
-    redirect("/sign-in");
+    return redirect("/sign-in");
   }
 
   try {
@@ -40,7 +44,7 @@ export default async function DetailIdPage({
     });
 
     if (!detail || !tractor) {
-      redirect("/tractor/tractors");
+      return redirect("/tractor/tractors");
     }
 
     const completeOnEnd = !UserProgress?.isCompleted;
@@ -116,6 +120,8 @@ export default async function DetailIdPage({
     );
   } catch (error) {
     console.error("Error loading detail page:", error);
-    redirect("/error");
+    return redirect("/error");
   }
 }
+
+export default DetailIdPage;

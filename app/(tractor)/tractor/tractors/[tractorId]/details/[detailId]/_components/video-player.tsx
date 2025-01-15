@@ -4,9 +4,9 @@ import axios from "axios";
 import MuxPlayer from "@mux/mux-player-react";
 import { useState, useEffect } from "react";
 import { Loader2, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
-import { useConfettiStore } from "~/hooks/use-confetti-store";
+import { useConfettiStore } from "@/hooks/use-confetti-store";
 import toast from "react-hot-toast";
 
 interface VideoPlayerProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatPrice } from "@/lib/format";
+import { formatPrice } from "@/app/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface DataCardProps{

@@ -1,8 +1,8 @@
-import { TractorList } from "@/components/tractors-list";
+import { TractorList } from "@/app/components/tractors-list";
 import { auth } from "@clerk/nextjs/server"
 import { CheckCircle, Clock } from "lucide-react";
 import { redirect } from "next/navigation";
-import { getDashboardTractors } from "~/actions/get-dashboard-tractors";
+import { getDashboardTractors } from "@/actions/get-dashboard-tractors";
 import { InfoCard } from "./_components/info-card";
 
 

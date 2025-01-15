@@ -3,7 +3,7 @@ import { Detail, Tractor, UserProgress } from "@prisma/client";
 import { redirect } from "next/navigation";
 //import { db } from "../../../../../lib/db";
 import { TractorSidebarItem } from "./tractor-sidebar-item";
-import { TractorProgress } from "@/components/tractor-progress";
+import { TractorProgress } from "@/app/components/tractor-progress";
 
 interface TractorSidebarProps{
     tractor: Tractor & {

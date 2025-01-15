@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname} from "next/navigation";
 import { SearchInput } from "./search-input";
 import { useAuth } from "@clerk/clerk-react";
-import { isSeller } from "@/lib/seller";
+import { isSeller } from "@/app/lib/seller";
 
 
 export const NavbarRoutes = () => {

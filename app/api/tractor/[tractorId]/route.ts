@@ -3,7 +3,7 @@ import Mux from "@mux/mux-node";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
-import { isSeller } from "@/lib/seller";
+import { isSeller } from "@/app/lib/seller";
 
 
 const testMuxConfig = {

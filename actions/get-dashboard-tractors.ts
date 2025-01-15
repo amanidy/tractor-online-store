@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/app/lib/db";
 import { Category, Detail, Tractor } from "@prisma/client";
 import { getProgress } from "./get-progress";
 

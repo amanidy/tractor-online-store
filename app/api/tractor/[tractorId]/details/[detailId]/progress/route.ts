@@ -1,7 +1,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/app/lib/db";
 
 interface RouteParams {
   params: {

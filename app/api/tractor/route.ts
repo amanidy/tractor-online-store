@@ -1,7 +1,7 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../lib/db";
-import { isSeller } from "@/lib/seller";
+import { isSeller } from "@/app/lib/seller";
 
 
 export async function POST(req: Request) {

@@ -1,4 +1,4 @@
-import { IconBadge } from "@/components/icon-badge"
+import { IconBadge } from "@/app/components/icon-badge"
 import { LucideIcon } from "lucide-react";
 
 

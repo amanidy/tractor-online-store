@@ -1,7 +1,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getAnalytics } from "~/actions/get-analytics";
+import { getAnalytics } from "@/actions/get-analytics";
 import { DataCard } from "../../components/data-card";
 import { Chart } from "../../components/chart";
 

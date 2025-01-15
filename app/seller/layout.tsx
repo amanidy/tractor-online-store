@@ -1,4 +1,4 @@
-import { isSeller } from "@/lib/seller";
+import { isSeller } from "@/app/lib/seller";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
