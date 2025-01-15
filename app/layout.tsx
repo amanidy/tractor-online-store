@@ -12,12 +12,22 @@ export const metadata = {
   description: "Buy and sell second-hand tractors and agri-implements",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Check if the current route is under /tractor
+  const isTractorRoute = false; // This will be handled by route grouping
+
+  if (isTractorRoute) {
+    return children;
+  }
+
   return (
     <ClerkProvider>
       <html lang="en">
         <body className="bg-gray-100 min-h-screen">
-
           <UserProvider>
             <ConfettiProvider />
             <ToastProvider />

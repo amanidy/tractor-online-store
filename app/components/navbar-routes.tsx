@@ -6,9 +6,14 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname} from "next/navigation";
 import { SearchInput } from "./search-input";
+import { useAuth } from "@clerk/clerk-react";
+import { isSeller } from "@/lib/seller";
+
 
 export const NavbarRoutes = () => {
     const pathname = usePathname();
+
+    const { userId } = useAuth();
 
     const isSellerPage = pathname?.startsWith("/seller");
     const isBuyerPage = pathname?.includes("/tractors");
@@ -35,18 +40,15 @@ export const NavbarRoutes = () => {
                  </Button>
                  </Link>
                  
-             ) : (
-                     <><Link href="/seller">
+             ) : isSeller(userId) ?  (
+                        <><Link href="/seller">
+                            
                          <Button size="sm" variant="ghost">
                              Seller Mode
                          </Button>
                      </Link>
-                         <Link href="/demo/tractors/">
-                             <Button size="sm" variant="ghost">
-                                 Demo Mode
-                             </Button>
-                         </Link></>
-             )}
+                         </>
+             ): null}
              <UserButton
              afterSignOutUrl ="/"
              />

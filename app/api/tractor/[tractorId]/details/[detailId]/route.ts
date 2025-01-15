@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
 
+
 const testMuxConfig = {
   tokenId: process.env.MUX_TOKEN_ID,
   tokenSecret: process.env.MUX_TOKEN_SECRET,
@@ -123,18 +124,31 @@ export async function DELETE(
   
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function PATCH(req: Request, { params }: any): Promise<NextResponse> {
+
+interface RouteParams {
+  params: {
+    tractorId: string;
+    detailId: string;
+  };
+}
+
+export async function PATCH(
+  req: Request,
+  { params }: RouteParams
+): Promise<NextResponse> {
   try {
     const { userId } = await auth();
-    const { ...values } = await req.json();
+    const values = await req.json();
 
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    
     const { tractorId, detailId } = params;
+
+    if (!tractorId || !detailId) {
+      return new NextResponse("Missing required parameters", { status: 400 });
+    }
 
     const sellerOwner = await db.tractor.findUnique({
       where: {

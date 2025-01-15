@@ -5,52 +5,50 @@ import { Categories } from "./_components/categories";
 import { redirect } from "next/navigation";
 import { TractorList } from "../../components/tractors-list";
 
+interface SearchPageProps {
+    searchParams: {
+        title?: string;
+        categoryId?: string;
+    };
+}
 
+const SearchPage = async ({ searchParams }: SearchPageProps) => {
+    try {
+        const { userId } = await auth();
 
+        if (!userId) {
+            return redirect("/");
+        }
 
+        const title = searchParams?.title || "";
+        const categoryId = searchParams?.categoryId || "";
 
-const SearchPage = async ({
-    searchParams
-}:
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any
-): Promise<JSX.Element> => {
+        const categories = await db.category.findMany({
+            orderBy: {
+                name: "asc"
+            }
+        });
 
-    const { userId } = await auth();
+        const tractors = await getTractors({
+            userId,
+            title,
+            categoryId,
+        });
 
-    const title = searchParams;
-    const categoryId = searchParams;
-
-    if (!userId) {
+        return (
+            <div className="p-6 space-y-4">
+                <Categories
+                    items={categories}
+                />
+                <TractorList
+                    items={tractors}
+                />
+            </div>
+        );
+    } catch (error) {
+        console.error("Error in search page:", error);
         return redirect("/");
     }
-
-    const categories = await db.category.findMany({
-        orderBy: {
-            name: "asc"
-        }
-    });
-
-    const tractors = await getTractors({
-        userId,
-        title: title,
-        categoryId:categoryId,
-    });
-
-    return ( 
-        <div className="p-6 space-y-4"> 
-            <Categories
-            items={categories}
-            
-            />
-
-            <TractorList
-            items={tractors}
-            />
-            
-
-        </div>
-     );
 }
- 
+
 export default SearchPage;

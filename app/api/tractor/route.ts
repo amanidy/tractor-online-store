@@ -1,13 +1,14 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../lib/db";
+import { isSeller } from "@/lib/seller";
 
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
+    if (!userId || !isSeller(userId)) {
       console.error("Unauthorized: No user ID found.");
       return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,

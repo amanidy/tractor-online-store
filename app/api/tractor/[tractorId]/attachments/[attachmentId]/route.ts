@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../../../../lib/db";
 
+
 export async function DELETE(
   req: Request,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,7 +10,7 @@ export async function DELETE(
 ): Promise<NextResponse> {
   try {
     const { userId } = await auth();
-    if (!userId) {
+    if (!userId ) {
       return NextResponse.json("Unauthorized", { status: 401 });
     }
 

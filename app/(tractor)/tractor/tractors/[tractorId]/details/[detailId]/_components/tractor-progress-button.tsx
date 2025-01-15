@@ -46,7 +46,7 @@ export const TractorProgressButton = ({
             }
 
             if (!isCompleted && nextDetailId) {
-                router.push(`/tractor/${tractorId}/details/${nextDetailId}`);
+                router.push(`/tractor/tractors/${tractorId}/details/${nextDetailId}`);
             }
             
             toast.success("Progress updated");

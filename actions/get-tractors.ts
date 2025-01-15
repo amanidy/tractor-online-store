@@ -23,10 +23,8 @@ export const getTractors = async ({
     const tractors = await db.tractor.findMany({
       where: {
         isApproved: true,
-        title: {
-          contains: title,
-        },
-        categoryId,
+        ...(title ? { title: { contains: title } } : {}),
+        ...(categoryId ? { categoryId } : {}),
       },
       include: {
         category: true,

@@ -27,7 +27,7 @@ export const TractorSidebarItem = ({
     const isActive = pathname?.includes(id);
 
     const onClick = () => {
-        router.push(`/tractor/${tractorId}/details/${id}`)
+        router.push(`/tractor/tractors/${tractorId}/details/${id}`)
     };
 
 

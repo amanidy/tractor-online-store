@@ -3,6 +3,7 @@ import Mux from "@mux/mux-node";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { db } from "../../../lib/db";
+import { isSeller } from "@/lib/seller";
 
 
 const testMuxConfig = {
@@ -34,7 +35,7 @@ export async function DELETE(req: Request,
 
     const { tractorId } = params;
 
-    if (!userId) {
+    if (!userId || !isSeller(userId)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 

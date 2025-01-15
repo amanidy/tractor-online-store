@@ -9,16 +9,17 @@ import Preview from "@/components/preview";
 import { File } from "lucide-react";
 import { TractorProgressButton } from "./_components/tractor-progress-button";
 
-
+interface PageProps {
+  params: {
+    tractorId: string;
+    detailId: string;
+  };
+}
 
 export default async function DetailIdPage({
-  params,
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-}: any,
-):Promise<JSX.Element> {
-    const { userId } = await auth();
-    const tractorId = params;
-    const detailId = params;
+  params
+}: PageProps): Promise<JSX.Element> {
+  const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");
@@ -34,8 +35,8 @@ export default async function DetailIdPage({
       attachments,
     } = await getDetail({
       userId,
-      detailId: detailId,
-      tractorId: tractorId,
+      detailId: params.detailId,
+      tractorId: params.tractorId,
     });
 
     if (!detail || !tractor) {

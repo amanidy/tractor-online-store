@@ -2,24 +2,21 @@
 
 import axios from "axios";
 import MuxPlayer from "@mux/mux-player-react";
-import { useState } from "react";
-
-
-import { Loader2, Lock} from "lucide-react";
-
+import { useState, useEffect } from "react";
+import { Loader2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useConfettiStore } from "~/hooks/use-confetti-store";
 import toast from "react-hot-toast";
 
-interface VideoPlayerProps{
-    playbackId: string ;
+interface VideoPlayerProps {
+    playbackId: string;
     tractorId: string;
     detailId: string;
     title: string;
     nextDetailId?: string;
     completeOnEnd: boolean;
-};
+}
 
 export const VideoPlayer = ({
     playbackId,
@@ -28,20 +25,26 @@ export const VideoPlayer = ({
     title,
     nextDetailId,
     completeOnEnd,
-
 }: VideoPlayerProps) => {
-
     const [isReady, setIsReady] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const confetti = useConfettiStore();
 
-    const onEnd = async() => {
-        try {
+    useEffect(() => {
+        return () => {
+            setIsReady(false);
+            setIsLoading(false);
+        };
+    }, [detailId]);
 
-            if (completeOnEnd) {
+    const onEnd = async () => {
+        try {
+            if (completeOnEnd && !isLoading) {
+                setIsLoading(true);
                 await axios.put(`/api/tractor/${tractorId}/details/${detailId}/progress`, {
-                    isCompleted:true,
-                }); 
+                    isCompleted: true,
+                });
 
                 if (!nextDetailId) {
                     confetti.onOpen();
@@ -51,22 +54,22 @@ export const VideoPlayer = ({
                 router.refresh();
 
                 if (nextDetailId) {
-                    router.push(`/tractor/${tractorId}/details/${nextDetailId}`)
+                    router.push(`/tractor/tractors/${tractorId}/details/${nextDetailId}`);
                 }
             }
-            
-        } catch {
+        } catch  {
             toast.error("Something went wrong");
-        } 
-    }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    
     return (
-        <div className="relative-aspect-video">
+        <div className="relative aspect-video">
             {!isReady && (
-              <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
-             <Loader2 className="h-8 w-8 animate-spin text-secondary" />
-            </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
+                    <Loader2 className="h-8 w-8 animate-spin text-secondary" />
+                </div>
             )}
             
             {!completeOnEnd && (
@@ -77,19 +80,17 @@ export const VideoPlayer = ({
                     </p>
                 </div>
             )}
- 
-            <MuxPlayer 
-                title={title}
-                className={cn(
-                    !isReady && "hidden"
-                )}
-                onCanPlay={() => setIsReady(true)}
-                onEnded={onEnd}
-                autoPlay
-                playbackId={playbackId}
-            />
 
+            {completeOnEnd && (
+                <MuxPlayer 
+                    title={title}
+                    className={cn(!isReady && "hidden")}
+                    onCanPlay={() => setIsReady(true)}
+                    onEnded={onEnd}
+                    autoPlay
+                    playbackId={playbackId}
+                />
+            )}
         </div>
-    )
-    
-}
+    );
+};
