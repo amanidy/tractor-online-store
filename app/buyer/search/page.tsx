@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { auth } from "@clerk/nextjs/server";
 import { getTractors } from "../../../actions/get-tractors";
 import { db } from "../../lib/db";
