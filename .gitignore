@@ -40,5 +40,5 @@ yarn-error.log*
 next-env.d.ts
 .env*.local
 
-dist
-dist1
+ /dist
+/dist1
