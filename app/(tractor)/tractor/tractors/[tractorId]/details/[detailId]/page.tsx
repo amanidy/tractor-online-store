@@ -14,15 +14,15 @@ import { getDetail } from "@/actions/get-details";
 
 
 type GeneratedPageProps = {
-  params: {
+  params: Promise<{
     tractorId: string;
     detailId: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 async function DetailIdPage(props: GeneratedPageProps) {
-  const { params } = props;
+  const { params } =await props.params;
   const { userId } = await auth();
 
   if (!userId) {
