@@ -11,6 +11,7 @@ interface PageProps {
 const TractorIdPage = async ({ params }: PageProps) => {
 
     const {tractorId} = await params;
+    console.log("tractorId",tractorId);
     
     const { userId } = await auth();
     
@@ -18,7 +19,7 @@ const TractorIdPage = async ({ params }: PageProps) => {
         return redirect("/sign-in");
     }
 
-    if (!params.tractorId) {
+    if (!tractorId) {
         return redirect("/");
     }
 
