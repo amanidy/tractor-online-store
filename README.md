@@ -22,6 +22,9 @@ A modern, full-stack e-commerce platform for buying and selling tractors and agr
 
 Tractor Online Store is a specialized e-commerce platform designed to connect tractor sellers with buyers. The platform provides detailed product listings with video demonstrations, secure payment processing, and comprehensive user progress tracking.
 
+📸 Screenshots 
+![Homepage](/IMG-20260113-WA0003.jpg)
+
 🔍 Problem & Solution
 
 Problem
