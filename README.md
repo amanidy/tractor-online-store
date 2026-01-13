@@ -26,7 +26,7 @@ Tractor Online Store is a specialized e-commerce platform designed to connect tr
 ![Homepage](/IMG-20260113-WA0003.jpg)
 ![Homepage](/IMG-20260113-WA0001.jpg)
 ![Tractors](/IMG-20260113-WA0000.jpg)
-
+![About](/IMG-20260113-WA0002.jpg)
 🔍 Problem & Solution
 
 Problem
