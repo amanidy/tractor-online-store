@@ -3,12 +3,14 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         tractorId: string;
-    };
+    }>;
 }
 
 const TractorIdPage = async ({ params }: PageProps) => {
+
+    const {tractorId} = await params;
     
     const { userId } = await auth();
     
@@ -23,7 +25,7 @@ const TractorIdPage = async ({ params }: PageProps) => {
     try {
         const tractor = await db.tractor.findUnique({
             where: {
-                id: params.tractorId,
+                id: tractorId,
                 sellerId:userId
             },
             include: {
