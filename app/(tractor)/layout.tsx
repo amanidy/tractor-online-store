@@ -2,7 +2,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import "../globals.css";
 import { ToastProvider } from '../components/providers/toaster-provider';
 import { ConfettiProvider } from '../components/providers/confetti-provider';
-
+import { ClientProviders } from "../components/providers/client-providers";
 export default function TractorRootLayout({
   children,
 }: {
@@ -10,15 +10,14 @@ export default function TractorRootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body>
-          <ConfettiProvider />
-          <ToastProvider />
-          <main className="h-full">
+      
+          <ClientProviders>
+<main className="h-full">
             {children}
           </main>
-        </body>
-      </html>
+          </ClientProviders>
+          
+    
     </ClerkProvider>
   );
 }

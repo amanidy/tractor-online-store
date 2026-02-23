@@ -10,38 +10,37 @@ const TractorLayout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: { tractorId: string };
+  params: Promise<{ tractorId: string }>;
 }): Promise<JSX.Element> => {
   const { userId } = await auth();
 
+  console.log("=== TractorLayout ===");
+  console.log("userId:", userId);
+
   if (!userId) {
+    console.log("No userId — redirecting to /");
     return redirect("/");
   }
 
+  const { tractorId } = await params;
+  console.log("tractorId:", tractorId);
+
   const tractor = await db.tractor.findUnique({
-    where: {
-      id: params.tractorId,
-    },
+    where: { id: tractorId },
     include: {
       details: {
-        where: {
-          isPublished: true,
-        },
-        include: {
-          UserProgress: {
-            where: {
-              userId,
-            }
-          }
-        },
-        orderBy: {
-          position: "asc",
-        },
+        where: { isPublished: true },
+        include: { UserProgress: { where: { userId } } },
+        orderBy: { position: "asc" },
       }
     }
   });
 
+  console.log("tractor found:", tractor?.id ?? "NULL");
+  console.log("details count:", tractor?.details?.length ?? 0);
+
   if (!tractor) {
+    console.log("No tractor — redirecting to /");
     return redirect("/");
   }
 
@@ -50,16 +49,10 @@ const TractorLayout = async ({
   return (
     <div className="h-full">
       <div className="h-[80px] md:pl-80 fixed inset-y-0 w-full z-50">
-        <TractorNavbar
-          tractor={tractor}
-          progressCount={progressCount}
-        />
+        <TractorNavbar tractor={tractor} progressCount={progressCount} />
       </div>
       <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-50">
-        <TractorSidebar
-          tractor={tractor}
-          progressCount={progressCount}
-        />
+        <TractorSidebar tractor={tractor} progressCount={progressCount} />
       </div>
       <main className="md:pl-80 pt-[80px] h-full">
         {children}

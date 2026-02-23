@@ -31,7 +31,6 @@ export const getDetail = async ({
       }),
       db.tractor.findUnique({
         where: {
-          isApproved: true,
           id: tractorId,
         },
         select: {
@@ -63,29 +62,26 @@ export const getDetail = async ({
     }
 
     if (detail.isPublished || purchase) {
-      const [muxDataResult, nextDetailResult] = await Promise.all([
+    const [muxDataResult, nextDetailResult] = await Promise.all([
         db.muxData.findUnique({
-          where: {
-            detailId,
-          },
+            where: { detailId },
         }),
         db.detail.findFirst({
-          where: {
-            tractorId,
-            isPublished: true,
-            position: {
-              gt: detail?.position,
+            where: {
+                tractorId,
+                isPublished: true,
+                position: { gt: detail?.position },
             },
-          },
-          orderBy: {
-            position: "asc",
-          },
+            orderBy: { position: "asc" },
         }),
-      ]);
+    ]);
 
-      muxData = muxDataResult;
-      nextDetail = nextDetailResult;
-    }
+    console.log("=== muxDataResult ===", muxDataResult);
+    console.log("detailId used for mux lookup:", detailId);
+
+    muxData = muxDataResult;
+    nextDetail = nextDetailResult;
+}
 
     const UserProgress = await db.userProgress.findUnique({
       where: {

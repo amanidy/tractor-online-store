@@ -9,12 +9,9 @@ interface PageProps {
 }
 
 const TractorIdPage = async ({ params }: PageProps) => {
-
-    const {tractorId} = await params;
-    console.log("tractorId",tractorId);
-    
+    const { tractorId } = await params;
     const { userId } = await auth();
-    
+
     if (!userId) {
         return redirect("/sign-in");
     }
@@ -27,7 +24,7 @@ const TractorIdPage = async ({ params }: PageProps) => {
         const tractor = await db.tractor.findUnique({
             where: {
                 id: tractorId,
-                sellerId:userId
+                // removed sellerId: userId — buyers can't view their own listings
             },
             include: {
                 details: {
@@ -51,9 +48,8 @@ const TractorIdPage = async ({ params }: PageProps) => {
 
         const firstDetailId = tractor.details[0].id;
         return redirect(`/tractor/tractors/${tractor.id}/details/${firstDetailId}`);
-        
+
     } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((error as any)?.digest?.includes('NEXT_REDIRECT')) {
             throw error;
         }

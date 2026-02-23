@@ -1,17 +1,14 @@
 
 import { Banner } from "@/app/components/banner";
 import { redirect } from "next/navigation";
-//import { getDetail } from "~/actions/get-details";
 import { VideoPlayer } from "./_components/video-player";
 import { auth } from "@clerk/nextjs/server";
 import { TractorPurchaseButton } from "./_components/tractor-purchase-button";
 import { Separator } from "@/app/components/ui/separator";
-
 import { File } from "lucide-react";
 import { TractorProgressButton } from "./_components/tractor-progress-button";
 import Preview from "@/app/components/preview";
 import { getDetail } from "@/actions/get-details";
-
 
 type GeneratedPageProps = {
   params: Promise<{
@@ -22,28 +19,35 @@ type GeneratedPageProps = {
 };
 
 async function DetailIdPage(props: GeneratedPageProps) {
-  const { params } =await props.params;
+  const params = await props.params;
   const { userId } = await auth();
 
+  console.log("=== DetailIdPage ===");
+  console.log("tractorId:", params.tractorId);
+  console.log("detailId:", params.detailId);
+  console.log("userId:", userId);
+
   if (!userId) {
+    console.log("No userId, redirecting to sign-in");
     return redirect("/sign-in");
   }
 
   try {
-    const {
-      detail,
-      tractor,
-      muxData,
-      UserProgress,
-      nextDetail,
-      attachments,
-    } = await getDetail({
+    const result = await getDetail({
       userId,
       detailId: params.detailId,
       tractorId: params.tractorId,
     });
 
+    console.log("getDetail result:");
+    console.log("  detail:", result.detail?.id ?? "NULL");
+    console.log("  tractor:", result.tractor ?? "NULL");
+    console.log("  purchase:", result.purchase ?? "NULL");
+
+    const { detail, tractor, muxData, UserProgress, nextDetail, attachments } = result;
+
     if (!detail || !tractor) {
+      console.log("detail or tractor is null — redirecting");
       return redirect("/tractor/tractors");
     }
 
@@ -99,8 +103,8 @@ async function DetailIdPage(props: GeneratedPageProps) {
                 <Separator />
                 <div className="p-4">
                   {attachments.map((attachment) => (
-                    <a
-                      href={attachment.url}
+                    
+                     <a href={attachment.url ?? "#"}
                       target="_blank"
                       key={attachment.id}
                       className="flex items-center w-full bg-sky-200 p-3 border text-sky-700 rounded-md hover:underline"
@@ -119,7 +123,7 @@ async function DetailIdPage(props: GeneratedPageProps) {
       </div>
     );
   } catch (error) {
-    console.error("Error loading detail page:", error);
+    console.error("=== DetailIdPage Error ===", error);
     return redirect("/error");
   }
 }
