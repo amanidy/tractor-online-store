@@ -41,6 +41,7 @@
     "cmdk": "^1.0.4",
     "draft-js": "^0.11.7",
     "formidable": "^3.5.2",
+    "immutable": "^5.1.4",
     "lucide-react": "^0.462.0",
     "next": "16.0.10",
     "next-auth": "^5.0.0-beta.25",
